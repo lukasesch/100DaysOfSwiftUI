@@ -7,12 +7,18 @@
 
 import SwiftUI
 
+struct Questions {
+    var question: String
+    var answer: Int
+}
+
 struct ContentView: View {
     
     @State private var question = ""
     @State private var settingsScreen = true
     @State private var selectedQuestionNumber = 5
     @State private var selectedTableNumber = 10
+    @State private var QuestionsArray: [Questions] = []
     let numberOfQuestions = [5, 10, 20]
     
     var body: some View {
@@ -64,6 +70,7 @@ struct ContentView: View {
     }
     
     func startGame() {
+        generateQuestions()
         withAnimation() {
             settingsScreen.toggle()
         }
@@ -72,8 +79,19 @@ struct ContentView: View {
     func resetGame() {
         selectedQuestionNumber = 5
         selectedTableNumber = 10
+        QuestionsArray.removeAll()
         withAnimation() {
             settingsScreen.toggle()
+        }
+    }
+    
+    func generateQuestions() {
+        for i in 1 ... selectedQuestionNumber {
+            var number1 = Int.random(in: 1...selectedTableNumber)
+            var number2 = Int.random(in: 1...selectedTableNumber)
+            var result = number1 * number2
+            let question = Questions(question:"What is \(number1) * \(number2)?", answer: result)
+            QuestionsArray.append(question)
         }
     }
 }

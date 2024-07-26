@@ -20,9 +20,7 @@ struct ContentView: View {
         //SETTINGS MENU
         
         if settingsScreen {
-            VStack {
-                Text("Multiplication Fun")
-                    .font(.largeTitle)
+            NavigationView {
                 Form {
                     Section {
                         Text("Maximum number of table?")
@@ -40,22 +38,25 @@ struct ContentView: View {
                             }
                         }
                     }
+                    Button(action: {startGame()}, label: {
+                        Text("Play!")
+                    })
                 }
-                Button(action: {startGame()}, label: {
-                    Text("Play!")
-                })
-                .buttonStyle(.borderedProminent)
+                .navigationTitle("Multiplication Fun")
+                
+                
     
             }
-            .padding()
             
-        //ACTUAL GAME 
+            
+        //ACTUAL GAME
             
         } else {
             VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
+                Button(action: {resetGame()}, label: {
+                    Text("Reset Game!")
+                })
+                .buttonStyle(.borderedProminent)
                 Text("Hello, Lukas!")
             }
             .padding()
@@ -66,7 +67,14 @@ struct ContentView: View {
         withAnimation() {
             settingsScreen.toggle()
         }
-        
+    }
+    
+    func resetGame() {
+        selectedQuestionNumber = 5
+        selectedTableNumber = 10
+        withAnimation() {
+            settingsScreen.toggle()
+        }
     }
 }
 

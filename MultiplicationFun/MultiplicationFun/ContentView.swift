@@ -5,6 +5,13 @@
 //  Created by Lukas Esch on 26.07.24.
 //
 
+// TODO: Integrate Popup for right and wrong answers
+// TODO: You won Popup or screen
+//
+// Longterm
+// TODO: Premade 3 Choice Answers as Button, they flip green / red if right / wrong answer
+
+
 import SwiftUI
 
 struct Questions {
@@ -18,7 +25,10 @@ struct ContentView: View {
     @State private var settingsScreen = true
     @State private var selectedQuestionNumber = 5
     @State private var selectedTableNumber = 10
-    @State private var QuestionsArray: [Questions] = []
+    @State private var questionsArray: [Questions] = []
+    @State private var questionNumber = 0
+    @State private var userAnswer = ""
+    @State private var userScore = 0;
     let numberOfQuestions = [5, 10, 20]
     
     var body: some View {
@@ -58,14 +68,32 @@ struct ContentView: View {
         //ACTUAL GAME
             
         } else {
-            VStack {
-                Button(action: {resetGame()}, label: {
-                    Text("Reset Game!")
-                })
-                .buttonStyle(.borderedProminent)
-                Text("Hello, Lukas!")
+            NavigationView {
+                Form {
+                    Section {
+                        Text("\(questionsArray[questionNumber].question)")
+                        TextField("Answer:", text: $userAnswer)
+                            .keyboardType(.decimalPad)
+                            .onSubmit {
+                                submit(answer: userAnswer)
+                            }
+                        
+                        
+                    }
+                    Section {
+                        Button(action: {submit(answer: userAnswer)}, label: {
+                            Text("Submit")
+                        })
+                    }
+                    Section {
+                        Button(role: .destructive, action: {resetGame()}, label: {
+                            Text("Reset Game!")
+                        })
+                        
+                    }
+                }
+                .navigationTitle("Round: \(questionNumber+1)  -  Points: \(userScore)")
             }
-            .padding()
         }
     }
     
@@ -79,19 +107,39 @@ struct ContentView: View {
     func resetGame() {
         selectedQuestionNumber = 5
         selectedTableNumber = 10
-        QuestionsArray.removeAll()
         withAnimation() {
             settingsScreen.toggle()
         }
+        questionsArray.removeAll()
+    }
+    
+    func submit(answer: String) {
+        if let userAnswer = Int(answer), userAnswer == questionsArray[questionNumber].answer {
+            userScore += 1
+            //Popup!
+        } else {
+            //wrong Popup!
+        }
+        nextQuestion()
+    }
+    
+    func nextQuestion() {
+        userAnswer = ""
+        if (questionNumber < questionsArray.count-1) {
+            questionNumber += 1
+        } else {
+            //game done
+        }
+        
     }
     
     func generateQuestions() {
-        for i in 1 ... selectedQuestionNumber {
-            var number1 = Int.random(in: 1...selectedTableNumber)
-            var number2 = Int.random(in: 1...selectedTableNumber)
-            var result = number1 * number2
+        for _ in 1 ... selectedQuestionNumber {
+            let number1 = Int.random(in: 1...selectedTableNumber)
+            let number2 = Int.random(in: 1...selectedTableNumber)
+            let result = number1 * number2
             let question = Questions(question:"What is \(number1) * \(number2)?", answer: result)
-            QuestionsArray.append(question)
+            questionsArray.append(question)
         }
     }
 }

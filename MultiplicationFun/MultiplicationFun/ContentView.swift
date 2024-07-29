@@ -5,7 +5,6 @@
 //  Created by Lukas Esch on 26.07.24.
 //
 
-// TODO: Integrate Popup for right and wrong answers
 // TODO: You won Popup or screen
 //
 // Longterm
@@ -16,6 +15,7 @@ import SwiftUI
 
 struct Questions {
     var question: String
+    var popUpQuestion: String
     var answer: Int
 }
 
@@ -29,6 +29,9 @@ struct ContentView: View {
     @State private var questionNumber = 0
     @State private var userAnswer = ""
     @State private var userScore = 0;
+    @State private var showingAlert = false
+    @State private var alertHeader = ""
+    @State private var alertMessage = ""
     let numberOfQuestions = [5, 10, 20]
     
     var body: some View {
@@ -94,6 +97,11 @@ struct ContentView: View {
                 }
                 .navigationTitle("Round: \(questionNumber+1)  -  Points: \(userScore)")
             }
+            .alert(alertHeader, isPresented: $showingAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("\(alertMessage)")
+            }
         }
     }
     
@@ -116,10 +124,15 @@ struct ContentView: View {
     func submit(answer: String) {
         if let userAnswer = Int(answer), userAnswer == questionsArray[questionNumber].answer {
             userScore += 1
-            //Popup!
+            alertHeader = "Correct answer!"
+            alertMessage = "\(questionsArray[questionNumber].popUpQuestion) is indeed \(answer)! Great job!"
+            showingAlert = true;
         } else {
-            //wrong Popup!
+            alertHeader = "Wrong answer!"
+            alertMessage = "\(questionsArray[questionNumber].popUpQuestion) is actually \(questionsArray[questionNumber].answer)! Maybe next time!"
+            showingAlert = true;
         }
+        
         nextQuestion()
     }
     
@@ -128,7 +141,9 @@ struct ContentView: View {
         if (questionNumber < questionsArray.count-1) {
             questionNumber += 1
         } else {
-            //game done
+            alertHeader = "Game done!"
+            alertMessage = "The Game is over."
+            showingAlert = true;
         }
         
     }
@@ -138,7 +153,7 @@ struct ContentView: View {
             let number1 = Int.random(in: 1...selectedTableNumber)
             let number2 = Int.random(in: 1...selectedTableNumber)
             let result = number1 * number2
-            let question = Questions(question:"What is \(number1) * \(number2)?", answer: result)
+            let question = Questions(question:"What is \(number1) * \(number2)?", popUpQuestion:"\(number1) * \(number2)", answer: result)
             questionsArray.append(question)
         }
     }

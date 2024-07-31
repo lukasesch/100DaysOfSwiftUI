@@ -1,6 +1,7 @@
 # My Work on Paul Hudson's 100 Days of SwiftUI Course
 
 This repository contains my code contributions for Paul Hudson's 100 Days of SwiftUI course. I have been following the course and adding my own implementations and solutions to the projects and challenges.
+The folders don't include any strict 'learning' folders though, only the projects that are actual applications.
 
 ## Course Information
 

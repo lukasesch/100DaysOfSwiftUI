@@ -10,6 +10,10 @@
 // Longterm
 // TODO: Premade 3 Choice Answers as Button, they flip green / red if right / wrong answer
 
+// IMPORTANT COMMENTS:
+// This project is definitely unfinished and my way of switching between screens, is knowingly, not how it should be done in SwiftUI.
+// Looking through the upcoming coursework I realized though that these are upcoming topics, so this project will (hopefully) be updated again in the future.
+// So if anyone ever looks at this code: We all start somewhere. Cough. 
 
 import SwiftUI
 
@@ -22,7 +26,7 @@ struct Questions {
 struct ContentView: View {
     
     @State private var question = ""
-    @State private var settingsScreen = true
+    @State private var settingsScreen = 0
     @State private var selectedQuestionNumber = 5
     @State private var selectedTableNumber = 10
     @State private var questionsArray: [Questions] = []
@@ -38,7 +42,7 @@ struct ContentView: View {
         
         //SETTINGS MENU
         
-        if settingsScreen {
+        if settingsScreen == 0 {
             NavigationView {
                 Form {
                     Section {
@@ -70,7 +74,7 @@ struct ContentView: View {
             
         //ACTUAL GAME
             
-        } else {
+        } else if settingsScreen == 1 {
             NavigationView {
                 Form {
                     Section {
@@ -102,13 +106,25 @@ struct ContentView: View {
             } message: {
                 Text("\(alertMessage)")
             }
+        } else {
+            VStack {
+                Text("Congratulations!")
+                    .font(.title)
+                Text("Your score is \(userScore)!")
+                    .font(.headline)
+                Divider()
+                Button(action: {resetGame()}, label: {
+                    Text("Play again!")
+                })
+                .buttonStyle(.borderedProminent)
+            }
         }
     }
     
     func startGame() {
         generateQuestions()
         withAnimation() {
-            settingsScreen.toggle()
+            settingsScreen = 1
         }
     }
     
@@ -116,9 +132,15 @@ struct ContentView: View {
         selectedQuestionNumber = 5
         selectedTableNumber = 10
         withAnimation() {
-            settingsScreen.toggle()
+            settingsScreen = 0
         }
         questionsArray.removeAll()
+    }
+    
+    func showFinalScore() {
+        withAnimation() {
+            settingsScreen = 3
+        }
     }
     
     func submit(answer: String) {
@@ -132,7 +154,6 @@ struct ContentView: View {
             alertMessage = "\(questionsArray[questionNumber].popUpQuestion) is actually \(questionsArray[questionNumber].answer)! Maybe next time!"
             showingAlert = true;
         }
-        
         nextQuestion()
     }
     
@@ -141,9 +162,7 @@ struct ContentView: View {
         if (questionNumber < questionsArray.count-1) {
             questionNumber += 1
         } else {
-            alertHeader = "Game done!"
-            alertMessage = "The Game is over."
-            showingAlert = true;
+           //
         }
         
     }
